@@ -9,6 +9,9 @@ async function initializeKeypair(
     if (!process.env.PRIVATE_KEY) {
       console.log('Generating new keypair... 🗝️')
       const signer = Web3.Keypair.generate();
+
+      // When generating a keypair
+      await airdropSolIfNeeded(signer, connection);
   
       console.log('Creating .env file');
       fs.writeFileSync('.env', `PRIVATE_KEY=[${signer.secretKey.toString()}]`);
@@ -19,6 +22,10 @@ async function initializeKeypair(
     const secret = JSON.parse(process.env.PRIVATE_KEY ?? '') as number[];
     const secretKey = Uint8Array.from(secret);
     const keypairFromSecret = Web3.Keypair.fromSecretKey(secretKey);
+
+// When creating it from the secret key
+await airdropSolIfNeeded(keypairFromSecret, connection);
+
     return keypairFromSecret;
   }
 
